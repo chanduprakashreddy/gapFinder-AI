@@ -2,9 +2,233 @@
 @tailwind components;
 @tailwind utilities;
 
-html { background: #F2F5F7; color: #14212B; }
-body { font-family: var(--font-ui), system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-:focus-visible { outline: 3px solid #0F5F66; outline-offset: 2px; border-radius: 4px; }
-.hatch { background: repeating-linear-gradient(135deg, #E3E9ED 0 9px, #F3F6F8 9px 18px); }
-.read { font-family: var(--font-read), Georgia, serif; line-height: 1.65; }
-@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+/* ===== Premium Design Tokens ===== */
+:root {
+  --gradient-brand: linear-gradient(135deg, #0a4a50 0%, #0f5f66 40%, #1a8a7a 100%);
+  --gradient-dark: linear-gradient(135deg, #0c1117 0%, #141c25 50%, #0f1922 100%);
+  --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  --glass: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glow-brand: 0 0 30px rgba(15, 95, 102, 0.3);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.08);
+  --shadow-elevated: 0 8px 40px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== Global Styles ===== */
+html {
+  background: #0c1117;
+  color: #e2e8f0;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-ui), 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+}
+
+/* ===== Focus Styles ===== */
+:focus-visible {
+  outline: 2px solid #1a8a7a;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ===== Scrollbar Styling ===== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ===== Typography ===== */
+.read {
+  font-family: var(--font-read), 'Georgia', serif;
+  line-height: 1.75;
+  letter-spacing: 0;
+}
+
+/* ===== Glassmorphism Card ===== */
+.glass-card {
+  background: rgba(20, 28, 37, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow-card);
+}
+
+.glass-card-light {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ===== Animated Gradient Border ===== */
+.gradient-border {
+  position: relative;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #0f5f66, #1a8a7a, #0f5f66);
+  z-index: -1;
+  opacity: 0.5;
+}
+
+/* ===== Shimmer Loading Animation ===== */
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent 25%, rgba(255, 255, 255, 0.08) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+/* ===== Pulse Glow ===== */
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(15, 95, 102, 0.2);
+  }
+
+  50% {
+    box-shadow: 0 0 40px rgba(15, 95, 102, 0.4);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* ===== Float Animation ===== */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* ===== Fade In Up ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-in-delay {
+  animation-delay: 0.15s;
+}
+
+.animate-in-delay-2 {
+  animation-delay: 0.3s;
+}
+
+/* ===== Stat Card Hover ===== */
+.stat-card {
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-elevated);
+  border-color: rgba(26, 138, 122, 0.3);
+}
+
+/* ===== Nav Link ===== */
+.nav-link {
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #0f5f66, #1a8a7a);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-link:hover::after,
+.nav-link[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
+/* ===== Hatch Pattern (untested topics) ===== */
+.hatch {
+  background: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0 9px, rgba(255, 255, 255, 0.08) 9px 18px);
+}
+
+/* ===== Progress Bar Animation ===== */
+@keyframes progressFill {
+  from {
+    width: 0;
+  }
+}
+
+.progress-fill {
+  animation: progressFill 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ===== Reduced Motion ===== */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
