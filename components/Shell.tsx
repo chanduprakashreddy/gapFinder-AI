@@ -108,16 +108,17 @@ export default function Shell({ children }: { children: React.ReactNode }) {
   return (
     <Workspace.Provider value={{ user, subject, subjects, setSubjectId, reload }}>
       <div className="relative flex min-h-screen bg-paper overflow-x-hidden">
-        {/* Subtle Ambient AI Teacher Background */}
-        <div className="pointer-events-none fixed inset-0 z-0">
+        {/* Ambient Study Dashboard Background */}
+        <div className="pointer-events-none fixed inset-0 z-0 select-none overflow-hidden">
           <Image
-            src="/hero-bg.jpg"
+            src="/dashboard-bg.png"
             alt=""
             fill
-            className="object-cover opacity-[0.035] select-none"
+            className="object-cover object-top opacity-[0.06] filter contrast-125 saturate-110"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-paper/95 via-paper/90 to-paper/95" />
+          <div className="absolute inset-0 bg-gradient-to-b from-paper/40 via-paper/85 to-paper" />
+          <div className="absolute inset-0 bg-radial-gradient from-transparent via-paper/70 to-paper" />
         </div>
 
         {/* Sidebar */}

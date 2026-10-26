@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import GapMap from '@/components/GapMap';
@@ -35,8 +36,61 @@ export default function GapReport() {
   ];
 
   return (
-    <>
-      <PageTitle title="Gap report" sub={`Where you stand in ${subject.name}, topic by topic. Bigger tiles carry more marks.`} />
+    <div className="relative">
+      {/* Ambient Blended Atmospheric Glow */}
+      <div className="pointer-events-none absolute -top-10 -left-10 -right-10 h-[380px] overflow-hidden rounded-3xl z-0 select-none opacity-15 blur-[3px]">
+        <Image
+          src="/dashboard-bg.png"
+          alt=""
+          fill
+          priority
+          className="object-cover object-center filter contrast-125 saturate-120"
+        />
+        {/* Soft atmospheric gradient fades */}
+        <div className="absolute inset-0 bg-gradient-to-b from-paper/50 via-paper/85 to-paper" />
+        <div className="absolute inset-0 bg-radial-gradient from-transparent via-paper/80 to-paper" />
+      </div>
+
+      <div className="relative z-10">
+        <PageTitle title="Gap report" sub={`Where you stand in ${subject.name}, topic by topic. Bigger tiles carry more marks.`} />
+
+        {/* Visual Workflow Showcase Banner */}
+        <div className="mb-8 overflow-hidden rounded-2xl border border-brand/25 bg-gradient-to-r from-surface/90 via-surface-elevated/80 to-surface/90 shadow-card backdrop-blur-xl">
+          <div className="relative h-44 w-full overflow-hidden sm:h-52 md:h-60">
+            <Image
+              src="/dashboard-bg.png"
+              alt="GapFinder AI Architecture & Study Workflow"
+              fill
+              priority
+              className="object-cover object-center transition-transform duration-700 hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-paper via-paper/50 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-paper/95 via-paper/40 to-transparent" />
+            
+            <div className="absolute bottom-4 left-5 right-5 flex flex-wrap items-end justify-between gap-3">
+              <div className="max-w-xl">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-brand/40 bg-brand/20 px-2.5 py-0.5 text-xs font-semibold text-brand-light backdrop-blur-md">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Personalized Study Engine
+                </span>
+                <h2 className="mt-1 text-base font-bold text-white sm:text-lg md:text-xl">
+                  Find What You Don&apos;t Know. Study Smarter.
+                </h2>
+                <p className="hidden text-xs text-muted sm:block">
+                  Syllabus mapping &bull; Diagnostic quizzes &bull; Gap diagnosis &bull; Custom revision plan &bull; Source-grounded explanations
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Link href="/quiz" className={`${btn} !py-2 !px-4 text-xs shadow-glow`}>
+                  🧠 Diagnostic Quiz
+                </Link>
+                <Link href="/plan" className={`${btnGhost} !py-2 !px-4 text-xs !bg-surface/80 backdrop-blur-md`}>
+                  📋 Revision Plan
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
 
       {/* Stat Cards */}
       <div className="mb-8 grid grid-cols-2 gap-3 md:grid-cols-5">
@@ -101,6 +155,7 @@ export default function GapReport() {
         ))}
       </div>
       <p className="mt-4"><Link href="/plan" className="font-semibold text-brand-light transition-colors hover:text-brand underline">See today&apos;s revision plan →</Link></p>
-    </>
+      </div>
+    </div>
   );
 }
