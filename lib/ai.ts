@@ -40,7 +40,7 @@ const openRouterProvider = () =>
 
 export const chatModel = () => {
   if (provider() === 'google') {
-    return googleProvider()(process.env.CHAT_MODEL ?? 'gemini-2.5-flash');
+    return googleProvider()(process.env.CHAT_MODEL ?? 'gemini-3.5-flash');
   }
   if (provider() === 'groq') {
     return groqProvider()(process.env.CHAT_MODEL ?? 'openai/gpt-oss-20b');
