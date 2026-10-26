@@ -12,6 +12,7 @@ export async function POST(req: Request) {
     const form = await req.formData();
     const subjectId = String(form.get('subjectId') ?? '');
     const kind = String(form.get('kind') ?? 'notes') as Kind;
+    const replaceExisting = String(form.get('replaceExisting') ?? '') === 'true';
     if (!subjectId) throw new HttpError(400, 'Choose a subject first.');
     if (!KINDS.includes(kind)) throw new HttpError(400, 'Unknown document type.');
 
@@ -27,6 +28,6 @@ export async function POST(req: Request) {
       throw new HttpError(400, 'Attach a file or paste some text.');
     }
     const title = (String(form.get('title') ?? '').trim() || (file instanceof File && file.size > 0 ? file.name : 'Pasted text')).slice(0, 200);
-    return Response.json(await ingestDocument(sb, user.id, { subjectId, kind, title, pages }));
+    return Response.json(await ingestDocument(sb, user.id, { subjectId, kind, title, pages, replaceExisting }));
   } catch (e) { return fail(e); }
 }

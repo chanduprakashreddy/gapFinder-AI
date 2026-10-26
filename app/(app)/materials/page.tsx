@@ -43,6 +43,7 @@ export default function Materials() {
   const [file, setFile] = useState<File | null>(null);
   const [fileKey, setFileKey] = useState(0);
   const [inputMode, setInputMode] = useState<'file' | 'text'>('file');
+  const [replaceExisting, setReplaceExisting] = useState(true);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const [ok, setOk] = useState('');
@@ -68,6 +69,7 @@ export default function Materials() {
     const f = new FormData();
     f.set('subjectId', subject.id);
     f.set('kind', kind);
+    f.set('replaceExisting', String(replaceExisting));
     f.set('title', title);
     if (inputMode === 'file' && file) {
       f.set('file', file);
@@ -81,7 +83,9 @@ export default function Materials() {
         body: f,
       });
       setOk(
-        kind === 'syllabus'
+        r.topics.total > 0 && r.chunks > 0
+          ? `✓ Extracted ${r.topics.total} curriculum topics and indexed ${r.chunks} knowledge passages.`
+          : r.topics.total > 0
           ? `✓ Extracted ${r.topics.total} curriculum topics (${r.topics.added} newly identified).`
           : `✓ Indexed ${r.chunks} knowledge passages and linked them to your curriculum topics.`
       );
@@ -260,6 +264,23 @@ export default function Materials() {
               </p>
             </div>
           )}
+
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-line bg-surface/30 p-3 text-sm">
+            <input
+              type="checkbox"
+              checked={replaceExisting}
+              onChange={(e) => setReplaceExisting(e.target.checked)}
+              className="mt-0.5 h-4 w-4 accent-brand"
+            />
+            <span>
+              <span className="font-semibold text-ink">Replace existing {KIND_INFO[kind]?.label.toLowerCase()} material</span>
+              <span className="mt-0.5 block text-xs text-muted">
+                {kind === 'syllabus'
+                  ? 'This resets the topic map, diagnostic quiz history, and plan so every dashboard reflects the new syllabus.'
+                  : 'This removes earlier documents of this type before indexing the new one.'}
+              </span>
+            </span>
+          </label>
 
           {err && <ErrorNote message={err} />}
 

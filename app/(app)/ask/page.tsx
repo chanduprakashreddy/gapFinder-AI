@@ -48,7 +48,7 @@ export default function Ask() {
           <label htmlFor="q" className="mb-1.5 block text-sm font-medium text-muted">Your question</label>
           <textarea id="q" rows={3} className={field} value={q} onChange={(e) => setQ(e.target.value)} placeholder="e.g. Why are X-linked conditions more common in males?" required minLength={3} maxLength={500} />
         </div>
-        <button className={btn} disabled={busy}>
+        <button id="ask-submit-btn" className={btn} disabled={busy}>
           {busy ? (
             <><div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" /> Searching your notes…</>
           ) : (

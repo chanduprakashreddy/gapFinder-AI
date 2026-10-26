@@ -1,6 +1,6 @@
 import { generateText } from 'ai';
 import { authed, fail, HttpError } from '@/lib/server';
-import { chatModel } from '@/lib/ai';
+import { chatModel, markAIFailed } from '@/lib/ai';
 import { documentTitles } from '@/lib/rag';
 
 export const runtime = 'nodejs';
@@ -35,8 +35,18 @@ export async function POST(req: Request) {
       });
       explanation = text.trim();
     } catch (e) {
-      console.warn('Explanation failed:', e);
-      explanation = `According to your material: "${q.evidence}"`;
+      console.warn('LLM explanation failed, using evidence-based fallback:', e);
+      markAIFailed();
+      // Intelligent fallback explanation
+      const correctOpt = (q.options as string[])[q.correct_index];
+      const selectedOpt = (q.options as string[])[selectedIndex];
+      if (correct) {
+        explanation = `Correct! The answer "${correctOpt}" is supported by your study material. According to the source: "${q.evidence}"`;
+      } else {
+        explanation = `The correct answer is ${String.fromCharCode(65 + q.correct_index)}: "${correctOpt}". ` +
+          `Your choice "${selectedOpt}" is not supported by the material. ` +
+          `According to your notes: "${q.evidence}"`;
+      }
     }
 
     const { error } = await sb.from('attempts').insert({

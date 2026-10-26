@@ -52,7 +52,7 @@ export default function Quiz() {
       <>
         <PageTitle title="Diagnostic quiz" sub="15 questions written from your own notes. We start with the topics that matter most and that you are least likely to know. Every question cites its source." />
         {err && <div className="mb-4"><ErrorNote message={err} /></div>}
-        <button className={btn} onClick={start} disabled={stage === 'loading'}>
+        <button id="start-quiz-btn" className={btn} onClick={start} disabled={stage === 'loading'}>
           {stage === 'loading' ? (
             <><div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" /> Reading your notes and writing questions…</>
           ) : '🧠 Start quiz'}
@@ -132,7 +132,7 @@ export default function Quiz() {
           const isWrong = verdict && k === picked && k !== verdict.correctIndex;
           const state = !verdict ? '' : isCorrect ? 'border-strong bg-strong/10 ring-2 ring-strong/30' : isWrong ? 'border-weak bg-weak/10' : 'opacity-40';
           return (
-            <button key={k} onClick={() => answer(k)} disabled={!!verdict || busy}
+            <button key={k} id={`quiz-option-${k}`} onClick={() => answer(k)} disabled={!!verdict || busy}
               className={`group flex w-full gap-4 rounded-xl border border-line bg-surface/50 p-4 text-left transition-all hover:border-brand/30 hover:bg-surface ${state}`}>
               <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-bold transition-all ${isCorrect ? 'bg-strong text-white' : isWrong ? 'bg-weak text-white' : 'bg-surface-elevated text-muted group-hover:bg-brand/20 group-hover:text-brand-light'}`}>
                 {String.fromCharCode(65 + k)}
@@ -161,7 +161,7 @@ export default function Quiz() {
             &ldquo;{verdict.evidence}&rdquo;
             <cite className="mt-1 block font-sans text-xs not-italic">{verdict.citation.title}{verdict.citation.heading ? `, ${verdict.citation.heading}` : ''}</cite>
           </blockquote>
-          <button className={`${btn} mt-5`} onClick={next}>{i + 1 >= qs.length ? 'Finish quiz' : 'Next question →'}</button>
+          <button id="next-question-btn" className={`${btn} mt-5`} onClick={next}>{i + 1 >= qs.length ? 'Finish quiz' : 'Next question →'}</button>
         </section>
       )}
     </div>

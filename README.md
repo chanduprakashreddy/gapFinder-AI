@@ -3,7 +3,7 @@
 **Diagnosis-first study app.** It finds what a student doesn't know *before* they ask, then builds the revision plan from it.
 Most study tools wait for a question. A student can't ask about a gap they don't know they have.
 
-Next.js 15 · TypeScript · Tailwind · Supabase (Postgres + pgvector + Auth) · Vercel AI SDK · OpenAI
+Next.js 15 · TypeScript · Tailwind · Supabase (Postgres + pgvector + Auth) · Vercel AI SDK · Gemini, Groq, OpenRouter, or OpenAI
 
 ## Try it
 Demo account (after running the seed, see Setup): **demo@gapfinder.ai / GapFinder#2026**.
@@ -31,8 +31,8 @@ flowchart LR
   U[Student] --> UI[Next.js UI]
   UI -->|Bearer JWT| API[Next.js API routes]
   API -->|user-scoped client, RLS on| DB[(Postgres + pgvector)]
-  API -->|embeddings| EMB[text-embedding-3-small]
-  API -->|generation| LLM[gpt-4o-mini]
+  API -->|768-dimensional embeddings| EMB[Gemini, OpenAI, or local]
+  API -->|generation| LLM[Gemini, Groq, or OpenAI]
   subgraph Ingestion
     F[PDF / text] --> P[pdf-parse per page] --> C[heading-aware chunks] --> E[batch embed] --> DB
     S[Syllabus] --> T[topic extraction] --> TE[embed topics] --> DB
@@ -44,7 +44,7 @@ Every API route builds its Supabase client from the caller's JWT, so row-level s
 ## RAG pipeline
 1. **Parse.** `pdf-parse` renders text page by page (page numbers are kept for citations). Files with no extractable text (scans) are rejected with a clear message.
 2. **Chunk.** `lib/chunk.ts` is heading-aware: it tracks a heading stack, so a chunk's heading is its path (`Photosynthesis › Calvin cycle`). Sections are split into ~900-character windows with 120 overlap, preferring paragraph/sentence boundaries. Past papers are chunked one numbered question per chunk.
-3. **Embed.** `text-embedding-3-small` (1536 dims) over `heading + content`, in batches.
+3. **Embed.** A 768-dimensional Gemini, OpenAI, or local hashing embedding over `heading + content`, in batches.
 4. **Store.** `chunks` table with an HNSW cosine index.
 5. **Link to topics.** `link_chunks()` assigns each chunk to its nearest topic by cosine similarity and stores the score (`topic_score`), so linking quality is measurable. Below 0.25 a chunk is left unlinked.
 6. **Retrieve.** `match_chunks()` returns the top-k study passages (notes and textbooks only) for the signed-in user and subject, optionally restricted to a topic.
@@ -74,11 +74,15 @@ Every API route builds its Supabase client from the caller's JWT, so row-level s
 ## Setup
 1. Create a Supabase project. In the SQL editor run `supabase/schema.sql`.
 2. In Supabase → Authentication → Providers → Email, turn off "Confirm email" (so sign-up works instantly for judges).
-3. `cp .env.example .env.local` and fill in `OPENAI_API_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_KEY`.
+3. `cp .env.example .env.local` and fill in your Supabase settings plus one AI provider. For a no-cost option, create a [Groq API key](https://console.groq.com), then set `AI_PROVIDER=groq`, `GROQ_API_KEY=...`, `CHAT_MODEL=openai/gpt-oss-20b`, and `EMBEDDING_PROVIDER=local`. Groq powers generation while local hashing embeddings keep retrieval free. Free cloud plans still have provider rate limits.
+
+   Alternatively, set `AI_PROVIDER=openrouter`, `OPENROUTER_API_KEY=...`, `CHAT_MODEL=openrouter/free`, and `EMBEDDING_PROVIDER=local`. OpenRouter routes generation to a free model while the app keeps retrieval local. Do not set both providers as active.
 4. `npm install`
 5. `npm run seed`: creates the demo user, ingests `samples/`, simulates three quiz attempts (about 20 LLM calls).
 6. `npm run dev` → http://localhost:3000
 7. Deploy: import the repo in Vercel and add the same env vars (the service key is only needed locally for seeding).
+
+When changing embedding providers, create a new subject or re-upload its materials so that every stored passage and future query uses the same vector format.
 
 ## Tests and evaluation
 - `npm test`: unit tests for chunking and the diagnosis/plan maths (pure code, no network).
