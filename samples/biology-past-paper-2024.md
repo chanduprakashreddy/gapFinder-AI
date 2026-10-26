@@ -1,0 +1,15 @@
+# Biology 101: Past Paper 2024
+
+1. State two differences between prokaryotic and eukaryotic cells. [2 marks]
+2. Explain why the sodium-potassium pump is an example of active transport. [3 marks]
+3. Name the enzyme that fixes carbon dioxide in the Calvin cycle and state where it occurs. [2 marks]
+4. Describe what happens to water during the light-dependent reactions of photosynthesis. [3 marks]
+5. State the net yield of ATP from glycolysis and explain where it takes place. [2 marks]
+6. Describe the role of oxygen in oxidative phosphorylation. [3 marks]
+7. Explain what happens to pyruvate when a muscle cell has no oxygen. [3 marks]
+8. Explain why DNA replication is described as semi-conservative. [3 marks]
+9. Describe how the lagging strand is synthesised during DNA replication. [4 marks]
+10. Two heterozygous pea plants (Aa) are crossed. State the expected phenotype ratio of the offspring. [2 marks]
+11. A dihybrid cross between two AaBb parents is carried out. State the expected phenotype ratio. [2 marks]
+12. Explain why colour blindness is more common in males than in females. [4 marks]
+13. Describe how a test cross can show whether an organism is homozygous or heterozygous. [3 marks]

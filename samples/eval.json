@@ -1,0 +1,30 @@
+{
+  "retrieval": [
+    { "query": "Where does the Calvin cycle take place?", "expect": ["Calvin cycle"] },
+    { "query": "What does rubisco do?", "expect": ["Calvin cycle"] },
+    { "query": "Which enzyme joins Okazaki fragments?", "expect": ["Leading and lagging"] },
+    { "query": "How much ATP does glycolysis make?", "expect": ["Glycolysis"] },
+    { "query": "What is the phenotype ratio of a dihybrid cross?", "expect": ["Monohybrid and dihybrid"] },
+    { "query": "Why are X-linked recessive conditions more common in males?", "expect": ["Codominance and sex linkage"] },
+    { "query": "What does the sodium-potassium pump do?", "expect": ["Transport across membranes"] },
+    { "query": "What happens in photolysis?", "expect": ["Light-dependent"] },
+    { "query": "How do prokaryotes differ from eukaryotes?", "expect": ["Prokaryotic and eukaryotic"] },
+    { "query": "What is the final electron acceptor in respiration?", "expect": ["Krebs cycle and oxidative"] }
+  ],
+  "linking": [
+    { "headingContains": "Light-dependent", "topicContains": "Photosynthesis" },
+    { "headingContains": "Calvin cycle", "topicContains": "Photosynthesis" },
+    { "headingContains": "Glycolysis", "topicContains": "Respiration" },
+    { "headingContains": "Anaerobic", "topicContains": "Respiration" },
+    { "headingContains": "Organelles", "topicContains": "Cell" },
+    { "headingContains": "Semi-conservative", "topicContains": "DNA" },
+    { "headingContains": "Structure of DNA", "topicContains": "DNA" },
+    { "headingContains": "Monohybrid", "topicContains": "Genetics" },
+    { "headingContains": "Codominance", "topicContains": "Genetics" }
+  ],
+  "offTopic": [
+    "Who won the 2018 football world cup?",
+    "How do I install Python on Windows?",
+    "What is the capital of Australia?"
+  ]
+}

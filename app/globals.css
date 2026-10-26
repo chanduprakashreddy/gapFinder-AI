@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html { background: #F2F5F7; color: #14212B; }
+body { font-family: var(--font-ui), system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+:focus-visible { outline: 3px solid #0F5F66; outline-offset: 2px; border-radius: 4px; }
+.hatch { background: repeating-linear-gradient(135deg, #E3E9ED 0 9px, #F3F6F8 9px 18px); }
+.read { font-family: var(--font-read), Georgia, serif; line-height: 1.65; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
