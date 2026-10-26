@@ -127,13 +127,17 @@ export async function generateForTopic(
 
   let object;
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8_000);
     const result = await generateObject({
       model: chatModel(), schema, system: SYSTEM,
+      abortSignal: controller.signal,
       prompt:
         `Topic: ${topic.name}\nWrite ${n} questions.` +
         (avoid.length ? `\nDo not repeat these earlier questions:\n- ${avoid.slice(0, 12).join('\n- ')}` : '') +
         `\n\nPASSAGES:\n` + sources.map((p) => `[id: ${p.id}] (${p.heading})\n${p.content.slice(0, 1_200)}`).join('\n\n'),
     });
+    clearTimeout(timeout);
     object = result.object;
   } catch (e) {
     console.warn(`LLM question generation failed for topic "${topic.name}", using fallback:`, e);

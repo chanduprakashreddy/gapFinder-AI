@@ -3,6 +3,7 @@ import { buildPlan, computeGaps, overallMastery, type Attempt } from '@/lib/gap'
 import type { Diagnosis, HistoryPoint, ReviseSource } from '@/lib/types';
 
 export const runtime = 'nodejs';
+export const maxDuration = 60;
 
 /** Gap analysis and planning. Pure code (lib/gap.ts) over stored attempts; no LLM involved. */
 export async function GET(req: Request) {

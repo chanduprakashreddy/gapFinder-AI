@@ -9,6 +9,27 @@ export const KINDS = ['syllabus', 'notes', 'textbook', 'past_paper'] as const;
 export type Kind = (typeof KINDS)[number];
 const MAX_CHARS = 300_000;
 
+/**
+ * Sanitise text for PostgreSQL. Strips null bytes (\u0000), replacement
+ * characters, other control characters, and lone surrogates that cause
+ * "unsupported Unicode escape sequence" errors in Postgres JSONB/text columns.
+ */
+function sanitizeText(s: string): string {
+  return s
+    // Remove null bytes – the #1 cause of "unsupported Unicode escape sequence"
+    .replace(/\0/g, '')
+    // Remove other non-printable control chars (except newline, tab, carriage return)
+    // eslint-disable-next-line no-control-regex
+    .replace(/[\x01-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+    // Remove Unicode replacement character
+    .replace(/\uFFFD/g, '')
+    // Remove lone surrogates (\uD800-\uDFFF not in valid pairs)
+    .replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])/g, '')
+    .replace(/(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g, '')
+    // Collapse runs of whitespace (keeps things tidy)
+    .replace(/[ \t]{4,}/g, '  ');
+}
+
 const topicSchema = z.object({
   topics: z.array(z.object({ name: z.string(), description: z.string(), weight: z.number() })),
 });
@@ -26,7 +47,7 @@ async function extractTopics(text: string) {
       prompt: text.slice(0, 30_000),
     });
     const topics = object.topics
-      .map((t) => ({ name: t.name.trim().slice(0, 120), description: (t.description ?? '').trim().slice(0, 400), weight: Math.min(Math.max(t.weight || 1, 0.1), 100) }))
+      .map((t) => ({ name: sanitizeText(t.name.trim()).slice(0, 120), description: sanitizeText((t.description ?? '').trim()).slice(0, 400), weight: Math.min(Math.max(t.weight || 1, 0.1), 100) }))
       .filter((t) => t.name.length >= 2)
       .slice(0, 60);
     if (topics.length) return topics;
@@ -112,7 +133,8 @@ async function resetForReplacement(sb: SupabaseClient, subjectId: string, kind: 
 }
 
 export async function ingestDocument(sb: SupabaseClient, userId: string, input: IngestInput) {
-  const text = input.pages.map((p) => p.text).join('\n');
+  const text = sanitizeText(input.pages.map((p) => p.text).join('\n'));
+  const sanitizedTitle = sanitizeText(input.title);
   if (text.replace(/\s/g, '').length < 50)
     throw new HttpError(422, 'No extractable text found. If this is a scanned PDF, run OCR on it first or paste the text instead.');
   if (text.length > MAX_CHARS) throw new HttpError(413, `This file has more than ${MAX_CHARS.toLocaleString()} characters. Split it into smaller documents.`);
@@ -123,7 +145,7 @@ export async function ingestDocument(sb: SupabaseClient, userId: string, input: 
   if (input.replaceExisting) await resetForReplacement(sb, input.subjectId, input.kind);
 
   const { data: doc, error } = await sb.from('documents')
-    .insert({ user_id: userId, subject_id: input.subjectId, title: input.title, kind: input.kind, page_count: input.pages.length, char_count: text.length })
+    .insert({ user_id: userId, subject_id: input.subjectId, title: sanitizedTitle, kind: input.kind, page_count: input.pages.length, char_count: text.length })
     .select('id').single();
   if (error || !doc) throw new Error(`Saving document failed: ${error?.message}`);
 
@@ -151,7 +173,7 @@ export async function ingestDocument(sb: SupabaseClient, userId: string, input: 
       const chunkKind = input.kind === 'past_paper' ? 'past_paper' : (input.kind === 'textbook' ? 'textbook' : 'notes');
       const rows = raw.map((c, i) => ({
         user_id: userId, subject_id: input.subjectId, document_id: doc.id, kind: chunkKind,
-        heading: c.heading, content: c.content, page: c.page, position: c.position, embedding: vectors[i],
+        heading: sanitizeText(c.heading), content: sanitizeText(c.content), page: c.page, position: c.position, embedding: vectors[i],
       }));
       for (let i = 0; i < rows.length; i += 100) {
         const { error: e } = await sb.from('chunks').insert(rows.slice(i, i + 100));
